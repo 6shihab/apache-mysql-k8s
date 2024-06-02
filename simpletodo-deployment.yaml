@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simpletodo
+  namespace: my-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simpletodo
+  template:
+    metadata:
+      labels:
+        app: simpletodo
+    spec:
+      containers:
+        - name: simpletodo
+          image: 6shihab/simpletodo
+          ports:
+            - containerPort: 80
+          env:
+            - name: DB_HOST
+              value: mysql-svc
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-database
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+
