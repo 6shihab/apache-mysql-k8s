@@ -10,7 +10,7 @@ sudo apt update
 apt-cache policy docker-ce
 sudo apt install -y docker-ce
 
-
+sudo systemctl start docker
 sudo systemctl enable docker 
 sudo usermod -aG docker ${USER}
 
