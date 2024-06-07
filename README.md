@@ -16,7 +16,7 @@ Kubernetes cluster:
 3. Run Kubectl command
 ```bash
 
-kubectl create my-database
+kubectl create namespace my-database
 
 kubectl create sa jenkins -n my-database
 
