@@ -14,20 +14,21 @@ Jenkins end:
 Kubernetes cluster:
 
 3. Run Kubectl command
+```bash
 
-kubectl create namespace jenkins
+kubectl create my-database
 
-kubectl create sa jenkins -n jenkins
+kubectl create sa jenkins -n my-database
 
-kubectl create token jenkins -n jenkins --duration=8760h
+kubectl create token jenkins -n my-database --duration=8760h
 
-kubectl create rolebinding jenkins-admin-binding --clusterrole=admin --serviceaccount=jenkins:jenkins --namespace=jenkins
+kubectl create rolebinding jenkins-admin-binding --clusterrole=admin --serviceaccount=my-database:jenkins --namespace=my-database
 
 kubectl config view
 
 watch kubectl get pods -n jenkins
 
-
+```
 From Jenkins
 
 4. Configure Manage Jenkins
