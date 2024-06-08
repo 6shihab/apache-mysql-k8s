@@ -25,5 +25,16 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to k8s'){
+            steps{
+                withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kubeConfigFile', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                    sh 'kubectl get nodes'
+                    script{
+                        sh 'kubectl apply -f mysql-k8s/'
+                        sh 'kubectl get pods -n my-database'
+                    }
+                }
+            }
+        }
     }
 }
