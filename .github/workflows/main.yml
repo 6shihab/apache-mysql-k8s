@@ -26,7 +26,11 @@ jobs:
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
-
+      - name: check secret
+        run: >
+          echo "How Are you"
+          echo "${{ secrets.DOCKER_HUB_USERNAME }}"
+          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
