@@ -39,35 +39,40 @@ jobs:
         with:
           token: ${{ secrets.CIVO_TOKEN }}
 
-      # - name: Set up kubectl
-      #   uses: azure/setup-kubectl@v3
-
-      # - name: Configure kubectl
-      #   run: |
-      #     civo kubernetes config | tee kubeconfig.yaml
-      #     export KUBECONFIG=$PWD/kubeconfig.yaml
-      #     echo $KUBECONFIG
-      
-      # - name: Install Civo CLI
-      #   run: |
-      #     curl -sL https://civo.com/get | sh
-      #     tar xf /tmp/civo-1.0.88-linux-amd64.tar.gz -C /tmp
-      #     sudo mv /tmp/civo /usr/local/bin/civo
-
-      - name: Set up kubectl
+      - name: install kubectl
         uses: azure/setup-kubectl@v3
       
       - name: Configure kubectl
         uses: azure/k8s-set-context@v1
         with:
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
-
-      # - name: Get pods
-      #   run: |
-      #     civo kubernetes config | tee kubeconfig.yaml
-      #     export KUBECONFIG=$PWD/kubeconfig.yaml
-      #     kubectl get pods    
-      
+  
+      - name: Create deployment.yaml
+        run: |
+          cat <<EOF > nginx-deployment.yaml
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: nginx-deployment
+          spec:
+            replicas: 3
+            selector:
+              matchLabels:
+                app: nginx
+            template:
+              metadata:
+                labels:
+                  app: nginx
+              spec:
+                containers:
+                  - name: nginx
+                    image: nginx:latest
+                    ports:
+                      - containerPort: 80        
+          EOF
+          kubectl apply -f nginx-deployment.yaml
+        
       - name: Get Pods
         run: |
           kubectl get pods
+          kubectl delete deployment nginx-deployment.yaml
