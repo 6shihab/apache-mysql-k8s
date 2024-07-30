@@ -38,7 +38,15 @@ jobs:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         with:
           token: ${{ secrets.CIVO_TOKEN }}
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1.0.0
+
+      - name: Configure kubectl
+        run: |
+          civo kubernetes config | tee kubeconfig.yaml
+          export KUBECONFIG=$PWD/kubeconfig.yaml
           
-      - name: Apply BackendConfig
+      - name: Get Pods
         run: |
           kubectl get pods
