@@ -51,6 +51,7 @@ jobs:
       - name: Install Civo CLI
         run: |
           curl -sL https://civo.com/get | sh
+          tar xf /tmp/civo-1.0.88-linux-amd64.tar.gz -C .
           sudo mv /tmp/civo /usr/local/bin/civo
 
       - name: Set up kubectl
