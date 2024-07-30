@@ -35,7 +35,7 @@ jobs:
         uses: civo/action-civo@v1.0.0
         with:
           token: ${{ secrets.CIVO_TOKEN }}
-          region: LON1 
+          
       - name: Apply BackendConfig
         run: |
           kubectl get pods
