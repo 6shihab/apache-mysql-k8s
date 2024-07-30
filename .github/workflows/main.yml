@@ -32,10 +32,9 @@ jobs:
       #     push: true
       #     tags: ${{ secrets.DOCKER_HUB_USERNAME }}/apache-mysql-k8s-new:latest
       - name: Install civo CLI
-        uses: civo/cli-action@v1
+        uses: civo/action-civo@v1.0.0
         with:
           token: ${{ secrets.CIVO_TOKEN }}
-          region: LON1
           
       - name: Apply BackendConfig
         run: |
