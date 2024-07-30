@@ -75,4 +75,3 @@ jobs:
       - name: Get Pods
         run: |
           kubectl get pods
-          kubectl delete deployment nginx-deployment
