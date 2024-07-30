@@ -46,6 +46,7 @@ jobs:
         run: |
           civo kubernetes config | tee kubeconfig.yaml
           export KUBECONFIG=$PWD/kubeconfig.yaml
+          echo $KUBECONFIG
           
       - name: Get Pods
         run: |
