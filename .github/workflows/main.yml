@@ -55,16 +55,20 @@ jobs:
           sudo mv /tmp/civo /usr/local/bin/civo
 
       - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+      
+      - name: Configure kubectl
         uses: azure/k8s-set-context@v1
         with:
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
 
-      - name: Get pods
-        run: |
-          civo kubernetes config | tee kubeconfig.yaml
-          export KUBECONFIG=$PWD/kubeconfig.yaml
-          kubectl get pods    
+      # - name: Get pods
+      #   run: |
+      #     civo kubernetes config | tee kubeconfig.yaml
+      #     export KUBECONFIG=$PWD/kubeconfig.yaml
+      #     kubectl get pods    
       
       - name: Get Pods
         run: |
+          echo $KUBECONFIG
           kubectl get pods
