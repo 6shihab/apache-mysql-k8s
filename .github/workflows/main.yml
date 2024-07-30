@@ -32,22 +32,38 @@ jobs:
       #     push: true
       #     tags: ${{ secrets.DOCKER_HUB_USERNAME }}/apache-mysql-k8s-new:latest
       
-      - name: Install civo CLI
-        uses: civo/action-civo@v1.0.0
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-        with:
-          token: ${{ secrets.CIVO_TOKEN }}
+      # - name: Install civo CLI
+      #   uses: civo/action-civo@v1.0.0
+      #   env:
+      #     ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+      #   with:
+      #     token: ${{ secrets.CIVO_TOKEN }}
+
+      # - name: Set up kubectl
+      #   uses: azure/setup-kubectl@v3
+
+      # - name: Configure kubectl
+      #   run: |
+      #     civo kubernetes config | tee kubeconfig.yaml
+      #     export KUBECONFIG=$PWD/kubeconfig.yaml
+      #     echo $KUBECONFIG
+      
+      - name: Install Civo CLI
+        run: |
+          curl -sL https://civo.com/get | sh
+          sudo mv /home/runner/.civo /usr/local/bin/civo
 
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
+        uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
 
-      - name: Configure kubectl
+      - name: Get pods
         run: |
           civo kubernetes config | tee kubeconfig.yaml
           export KUBECONFIG=$PWD/kubeconfig.yaml
-          echo $KUBECONFIG
-          
+          kubectl get pods    
+      
       - name: Get Pods
         run: |
           kubectl get pods
