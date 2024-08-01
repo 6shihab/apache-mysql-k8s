@@ -90,8 +90,8 @@ jobs:
           cat ingress.json
    
           # Use jq to append the new rule and update the ManagedCertificate annotation
-          jq '.spec.rules += [{"host": "${{ env.login_port }}.cloud.dantisai.com", "http": {"paths": [{"pathType": "Prefix", "path": "/", "backend": {"service": {"name": "my-app-service-${{ env.login_port }}", "port": {"number": 3000}}}}]}}]' ingress.json > new_ingress.json
-          jq '.spec.tls += [{"hosts":["${{ env.login_port }}.cloud.dantisai.com"],"secretName":"my-managed-cert-${{ env.login_port }}-tls"}]' new_ingress.json > updated_ingress.json 
+          jq '.spec.rules += [{"host": "${{ github.run_number }}.cloud.dantisai.com", "http": {"paths": [{"pathType": "Prefix", "path": "/", "backend": {"service": {"name": "my-app-service-${{ github.run_number }}", "port": {"number": 3000}}}}]}}]' ingress.json > new_ingress.json
+          jq '.spec.tls += [{"hosts":["${{ github.run_number }}.cloud.dantisai.com"],"secretName":"my-managed-cert-${{ github.run_number }}-tls"}]' new_ingress.json > updated_ingress.json 
           # Print the updated Ingress configuration
           echo "Updated Ingress configuration:"
           cat updated_ingress.json
