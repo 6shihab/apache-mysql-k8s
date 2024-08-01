@@ -47,31 +47,51 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
   
-      - name: Create deployment.yaml
-        run: |
-          cat <<EOF > nginx-deployment.yaml
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: nginx-deployment
-          spec:
-            replicas: 3
-            selector:
-              matchLabels:
-                app: nginx
-            template:
-              metadata:
-                labels:
-                  app: nginx
-              spec:
-                containers:
-                  - name: nginx
-                    image: nginx:latest
-                    ports:
-                      - containerPort: 80        
-          EOF
-          kubectl apply -f nginx-deployment.yaml
+      # - name: Create deployment.yaml
+      #   run: |
+      #     cat <<EOF > nginx-deployment.yaml
+      #     apiVersion: apps/v1
+      #     kind: Deployment
+      #     metadata:
+      #       name: nginx-deployment
+      #     spec:
+      #       replicas: 3
+      #       selector:
+      #         matchLabels:
+      #           app: nginx
+      #       template:
+      #         metadata:
+      #           labels:
+      #             app: nginx
+      #         spec:
+      #           containers:
+      #             - name: nginx
+      #               image: nginx:latest
+      #               ports:
+      #                 - containerPort: 80        
+      #     EOF
+      #     kubectl apply -f nginx-deployment.yaml
         
       - name: Get Pods
         run: |
           kubectl get pods
+          echo "login_port: ${{ env.login_port }}"
+   
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Fetch and Update Ingress
+        run: |
+          # Fetch the current Ingress configuration
+          kubectl get ingress my-app-ingress-151477112-3000 -o json > ingress.json
+   
+          # Print the current Ingress configuration
+          echo "Current Ingress configuration:"
+          cat ingress.json
+   
+          # Use jq to append the new rule and update the ManagedCertificate annotation
+          jq '.spec.rules += [{"host": "${{ env.login_port }}.cloud.dantisai.com", "http": {"paths": [{"pathType": "Prefix", "path": "/", "backend": {"service": {"name": "my-app-service-${{ env.login_port }}", "port": {"number": ${{ env.port }}}}}}]}}]' ingress.json > new_ingress.json
+          jq '.spec.tls += [{"hosts":["${{ env.login_port }}.cloud.dantisai.com"],"secretName":"my-managed-cert-${{ env.login_port }}-tls"}]' new_ingress.json > updated_ingress.json 
+          # Print the updated Ingress configuration
+          echo "Updated Ingress configuration:"
+          cat updated_ingress.json
