@@ -75,23 +75,26 @@ jobs:
       - name: Get Pods
         run: |
           kubectl get pods
-          echo "login_port: ${{ env.login_port }}"
+          git clone https://github.com/kubernetes/kubernetes.git
+          cd kubernetes
+          FEATURE_GATES=InPlacePodVerticalScaling=true ./hack/local-up-cluster.sh
+      
    
-      - name: Install jq
-        run: sudo apt-get install -y jq
-
-      - name: Fetch and Update Ingress
-        run: |
-          # Fetch the current Ingress configuration
-          kubectl get ingress my-app-ingress -o json > ingress.json
+      # - name: Install jq
+      #   run: sudo apt-get install -y jq
+     
+      # - name: Fetch and Update Ingress
+      #   run: |
+      #     # Fetch the current Ingress configuration
+      #     kubectl get ingress my-app-ingress -o json > ingress.json
    
-          # Print the current Ingress configuration
-          echo "Current Ingress configuration:"
-          cat ingress.json
+      #     # Print the current Ingress configuration
+      #     echo "Current Ingress configuration:"
+      #     cat ingress.json
    
-          # Use jq to append the new rule and update the ManagedCertificate annotation
-          jq '.spec.rules += [{"host": "${{ github.run_number }}.cloud.dantisai.com", "http": {"paths": [{"pathType": "Prefix", "path": "/", "backend": {"service": {"name": "my-app-service-${{ github.run_number }}", "port": {"number": 3000}}}}]}}]' ingress.json > new_ingress.json
-          jq '.spec.tls += [{"hosts":["${{ github.run_number }}.cloud.dantisai.com"],"secretName":"my-managed-cert-${{ github.run_number }}-tls"}]' new_ingress.json > updated_ingress.json 
-          # Print the updated Ingress configuration
-          echo "Updated Ingress configuration:"
-          cat updated_ingress.json
+      #     # Use jq to append the new rule and update the ManagedCertificate annotation
+      #     jq '.spec.rules += [{"host": "${{ github.run_number }}.cloud.dantisai.com", "http": {"paths": [{"pathType": "Prefix", "path": "/", "backend": {"service": {"name": "my-app-service-${{ github.run_number }}", "port": {"number": 3000}}}}]}}]' ingress.json > new_ingress.json
+      #     jq '.spec.tls += [{"hosts":["${{ github.run_number }}.cloud.dantisai.com"],"secretName":"my-managed-cert-${{ github.run_number }}-tls"}]' new_ingress.json > updated_ingress.json 
+      #     # Print the updated Ingress configuration
+      #     echo "Updated Ingress configuration:"
+      #     cat updated_ingress.json
