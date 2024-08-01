@@ -83,7 +83,7 @@ jobs:
       - name: Fetch and Update Ingress
         run: |
           # Fetch the current Ingress configuration
-          kubectl get ingress my-app-ingress-151477112-3000 -o json > ingress.json
+          kubectl get ingress my-app-ingress -o json > ingress.json
    
           # Print the current Ingress configuration
           echo "Current Ingress configuration:"
